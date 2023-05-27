@@ -54,7 +54,7 @@ public class TicketService {
         //check booking person present or not
         Optional<Passenger> bookingPassengerOpt = passengerRepository.findById(bookTicketEntryDto.getBookingPersonId());
         if(!bookingPassengerOpt.isPresent()){
-            throw new PassengerNotPresentException("booking passenger not present");
+            throw new Exception("booking passenger not present");
         }
         Passenger bookingPassenger = bookingPassengerOpt.get();
 
@@ -68,7 +68,7 @@ public class TicketService {
         //checking availability of seats
         int seatAvailable = findAvailableSeatInTrain(train);
         if(seatAvailable<bookTicketEntryDto.getNoOfSeats()){
-            throw new Exception("Less tickets are available");
+            throw new Exception("booking passenger not present");
         }
 
         //checking stations and sequence
@@ -82,7 +82,7 @@ public class TicketService {
             if(routeArray[i].equals(String.valueOf(bookTicketEntryDto.getToStation())))idxOfToStation=i;
         }
         if(idxOfFromStation==-1 || idxOfToStation == -1 || idxOfToStation<=idxOfFromStation){
-            throw new Exception("Invalid stations");
+            throw new Exception("booking passenger not present");
         }
         //calculating price
         int fare = (idxOfToStation-idxOfFromStation)*300;
