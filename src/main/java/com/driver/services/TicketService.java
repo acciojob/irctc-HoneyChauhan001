@@ -54,7 +54,7 @@ public class TicketService {
         //check booking person present or not
         Optional<Passenger> bookingPassengerOpt = passengerRepository.findById(bookTicketEntryDto.getBookingPersonId());
         if(!bookingPassengerOpt.isPresent()){
-            throw new PassengerNotPresentException(" booking passenger not present");
+            throw new PassengerNotPresentException("booking passenger not present");
         }
         Passenger bookingPassenger = bookingPassengerOpt.get();
 
