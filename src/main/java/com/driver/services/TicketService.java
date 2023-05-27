@@ -2,6 +2,7 @@ package com.driver.services;
 
 
 import com.driver.EntryDto.BookTicketEntryDto;
+import com.driver.EntryDto.SeatAvailabilityEntryDto;
 import com.driver.exception.PassengerNotPresentException;
 import com.driver.exception.TrainNotPresentException;
 import com.driver.model.Passenger;
@@ -20,6 +21,8 @@ import java.util.Optional;
 @Service
 public class TicketService {
 
+    @Autowired
+    TrainService trainService;
     @Autowired
     TrainRepository trainRepository;
 
@@ -54,7 +57,7 @@ public class TicketService {
         //check booking person present or not
         Optional<Passenger> bookingPassengerOpt = passengerRepository.findById(bookTicketEntryDto.getBookingPersonId());
         if(!bookingPassengerOpt.isPresent()){
-            throw new Exception("booking passenger not present");
+            throw new PassengerNotPresentException("booking passenger not present");
         }
         Passenger bookingPassenger = bookingPassengerOpt.get();
 
@@ -66,9 +69,13 @@ public class TicketService {
         Train train = trainOpt.get();
 
         //checking availability of seats
-        int seatAvailable = findAvailableSeatInTrain(train);
+        SeatAvailabilityEntryDto seatAvailabilityEntryDto = new SeatAvailabilityEntryDto();
+        seatAvailabilityEntryDto.setTrainId(bookTicketEntryDto.getTrainId());
+        seatAvailabilityEntryDto.setFromStation(bookTicketEntryDto.getFromStation());
+        seatAvailabilityEntryDto.setToStation(bookTicketEntryDto.getToStation());
+        int seatAvailable = trainService.calculateAvailableSeats(seatAvailabilityEntryDto);
         if(seatAvailable<bookTicketEntryDto.getNoOfSeats()){
-            throw new Exception("booking passenger not present");
+            throw new Exception("Less tickets are available");
         }
 
         //checking stations and sequence
@@ -82,7 +89,7 @@ public class TicketService {
             if(routeArray[i].equals(String.valueOf(bookTicketEntryDto.getToStation())))idxOfToStation=i;
         }
         if(idxOfFromStation==-1 || idxOfToStation == -1 || idxOfToStation<=idxOfFromStation){
-            throw new Exception("booking passenger not present");
+            throw new Exception("Invalid stations");
         }
         //calculating price
         int fare = (idxOfToStation-idxOfFromStation)*300;
