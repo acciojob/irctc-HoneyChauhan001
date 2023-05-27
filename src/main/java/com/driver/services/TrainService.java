@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TrainService {
@@ -26,7 +27,22 @@ public class TrainService {
         //and route String logic to be taken from the Problem statement.
         //Save the train and return the trainId that is generated from the database.
         //Avoid using the lombok library
-        return null;
+        List<Station> stationList = trainEntryDto.getStationRoute();
+        String route = "";
+        int n = stationList.size();
+        for(int i=0; i<n-1; i++){
+            route += stationList.get(i) + ",";
+        }
+        route += stationList.get(n-1);
+
+        Train train  = new Train();
+        train.setRoute(route);
+        train.setDepartureTime(trainEntryDto.getDepartureTime());
+        train.setNoOfSeats(trainEntryDto.getNoOfSeats());
+
+        Train savedTrain = trainRepository.save(train);
+
+        return savedTrain.getTrainId();
     }
 
     public Integer calculateAvailableSeats(SeatAvailabilityEntryDto seatAvailabilityEntryDto){
@@ -39,8 +55,33 @@ public class TrainService {
         //even if that seat is booked post the destStation or before the boardingStation
         //Inshort : a train has totalNo of seats and there are tickets from and to different locations
         //We need to find out the available seats between the given 2 stations.
+        Train train = trainRepository.findById(seatAvailabilityEntryDto.getTrainId()).get();
+        Station fromStation = seatAvailabilityEntryDto.getFromStation();
+        Station toStation = seatAvailabilityEntryDto.getToStation();
 
-       return null;
+        List<Ticket> ticketList = train.getBookedTickets();
+        String route = train.getRoute();
+
+        int idxOfFromStation = route.indexOf(String.valueOf(fromStation));
+        int idxOfToStation = route.indexOf(String.valueOf(toStation));
+
+        int count = 0;
+
+        for(Ticket ticket : ticketList){
+            int idxOfTicketFromStation = route.indexOf(String.valueOf(ticket.getFromStation()));
+            int idxOfTicketToStation = route.indexOf(String.valueOf(ticket.getToStation()));
+
+            if(idxOfFromStation>=idxOfTicketFromStation && idxOfFromStation<=idxOfTicketToStation){
+                count += ticket.getPassengersList().size();
+            }
+            else if(idxOfToStation<=idxOfTicketToStation && idxOfToStation>=idxOfTicketFromStation) {
+                count += ticket.getPassengersList().size();
+            }
+
+        }
+        int noOfSeat = train.getNoOfSeats();
+
+        return noOfSeat-count;
     }
 
     public Integer calculatePeopleBoardingAtAStation(Integer trainId,Station station) throws Exception{

@@ -4,6 +4,8 @@ package com.driver.controllers;
 import com.driver.EntryDto.BookTicketEntryDto;
 import com.driver.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +19,13 @@ public class TicketController {
     TicketService ticketService;
 
     @PostMapping("/book")
-    public Integer bookTicket(@RequestBody BookTicketEntryDto bookTicketEntryDto){
+    public ResponseEntity bookTicket(@RequestBody BookTicketEntryDto bookTicketEntryDto){
 
         try {
             Integer ticketId = ticketService.bookTicket(bookTicketEntryDto);
-            return ticketId;
+            return new ResponseEntity(ticketId, HttpStatus.CREATED);
         }catch (Exception e) {
-            return null;
+            return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 
