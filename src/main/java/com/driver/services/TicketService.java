@@ -28,6 +28,8 @@ public class TicketService {
 
     @Autowired
     PassengerRepository passengerRepository;
+    @Autowired
+    TicketRepository ticketRepository;
 
 
     public Integer bookTicket(BookTicketEntryDto bookTicketEntryDto)throws Exception{
@@ -108,16 +110,15 @@ public class TicketService {
 
         Passenger bookingPassenger = passengerRepository.findById(bookTicketEntryDto.getBookingPersonId()).get();
 
+        bookingPassenger.getBookedTickets().add(ticket);
+
+        ticket.setTrain(train);
+
+        ticket = ticketRepository.save(ticket);
+
         train.getBookedTickets().add(ticket);
-
-        Train savedTrain = trainRepository.save(train);
-
-        int size = savedTrain.getBookedTickets().size();
-        Ticket savedTicket = savedTrain.getBookedTickets().get(size-1);
-        bookingPassenger.getBookedTickets().add(savedTicket);
-
-        return savedTicket.getTicketId();
-
+        train = trainRepository.save(train);
+        return ticket.getTicketId();
     }
 
     private int findAvailableSeatInTrain(Train train){
