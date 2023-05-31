@@ -51,7 +51,7 @@ public class TrainController {
     }
 
     @GetMapping("/calculate-oldest-person-travelling/{trainId}")
-    public Integer calculateOldestPersonTravelling(@PathVariable("trainId")Integer trainId){
+    public Integer calculateOldestPersonTravelling(@PathVariable("trainId") Integer trainId){
 
         //We need to find out the oldest person Travellign
 

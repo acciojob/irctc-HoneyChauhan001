@@ -19,13 +19,13 @@ public class TicketController {
     TicketService ticketService;
 
     @PostMapping("/book")
-    public ResponseEntity bookTicket(@RequestBody BookTicketEntryDto bookTicketEntryDto){
+    public Integer bookTicket(@RequestBody BookTicketEntryDto bookTicketEntryDto){
 
         try {
             Integer ticketId = ticketService.bookTicket(bookTicketEntryDto);
-            return new ResponseEntity(ticketId, HttpStatus.CREATED);
+            return ticketId;
         }catch (Exception e) {
-            return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 
