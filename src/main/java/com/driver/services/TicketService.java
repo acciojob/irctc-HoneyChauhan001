@@ -108,16 +108,16 @@ public class TicketService {
         ticket.setFromStation(bookTicketEntryDto.getFromStation());
         ticket.setToStation(bookTicketEntryDto.getToStation());
 
+        ticket = ticketRepository.save(ticket);
+
         Passenger bookingPassenger = passengerRepository.findById(bookTicketEntryDto.getBookingPersonId()).get();
 
         bookingPassenger.getBookedTickets().add(ticket);
 
 //        ticket.setTrain(train);
 
-        ticket = ticketRepository.save(ticket);
-
         train.getBookedTickets().add(ticket);
-        train = trainRepository.save(train);
+        //train = trainRepository.save(train);
         return ticket.getTicketId();
     }
 
