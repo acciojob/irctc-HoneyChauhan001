@@ -112,7 +112,7 @@ public class TicketService {
 
         bookingPassenger.getBookedTickets().add(ticket);
 
-        ticket.setTrain(train);
+//        ticket.setTrain(train);
 
         ticket = ticketRepository.save(ticket);
 
