@@ -116,7 +116,7 @@ public class TicketService {
 
 //        ticket.setTrain(train);
 
-        train.getBookedTickets().add(ticket);
+        //train.getBookedTickets().add(ticket);
         //train = trainRepository.save(train);
         return ticket.getTicketId();
     }
